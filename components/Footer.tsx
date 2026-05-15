@@ -85,9 +85,16 @@ export function Footer() {
                   )}
                 </span>
               </button>
-              <p className="mt-2 text-[10px] tracking-widest uppercase text-zinc-600 font-mono">
-                ► PLACEHOLDER — REPLACE WITH ON-CHAIN ADDRESS AT LAUNCH
-              </p>
+              <a
+                href={SOCIAL_LINKS.solscan}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-2 inline-flex items-center gap-1 text-[10px] tracking-widest uppercase text-terminal-green/80 hover:text-terminal-green font-mono"
+              >
+                <span className="h-1.5 w-1.5 rounded-full bg-terminal-green animate-flickerFast" />
+                VERIFIED ON-CHAIN ► VIEW ON SOLSCAN
+                <ExternalLink className="w-3 h-3" />
+              </a>
             </div>
           </div>
 

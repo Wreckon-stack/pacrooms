@@ -237,10 +237,13 @@ export const EVOLUTION_STAGES: EvolutionStage[] = [
   },
 ];
 
+const CONTRACT = "GRY1dQRAPU2iDP5RFzg52vrip4ttnPtJH1CjH6Lpump";
+
 export const SOCIAL_LINKS = {
-  pumpfun: "#",
+  pumpfun: `https://pump.fun/coin/${CONTRACT}`,
   twitter: "#",
   creator: "https://x.com/wreckon",
   creatorHandle: "@wreckon",
-  contract: "PACROOMS1111111111111111111111111111111111",
+  solscan: `https://solscan.io/token/${CONTRACT}`,
+  contract: CONTRACT,
 };
