@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { SectionHeader } from "./SectionHeader";
 import { ACTIVITY_EVENTS } from "@/lib/mockData";
@@ -16,9 +16,11 @@ const KIND_STYLE: Record<ActivityEvent["kind"], { color: string; tag: string }> 
   CONSUME: { color: "text-alert-red", tag: "CONSUME" },
   SOULS: { color: "text-terminal-amber", tag: "SOULS" },
   EVOLVE: { color: "text-terminal-phosphor", tag: "EVOLVE" },
+  GLITCH: { color: "text-alert-red", tag: "??!?" },
+  UNKNOWN: { color: "text-zinc-500", tag: "???" },
 };
 
-const ADDITIONAL: Omit<ActivityEvent, "id" | "ts">[] = [
+const NORMAL: Omit<ActivityEvent, "id" | "ts">[] = [
   { kind: "SCAN", text: "PINGING PUMP.FUN /launches → 47 NEW PAIRS" },
   { kind: "DETECT", text: "ENTITY DETECTED: $WIFROOMS" },
   { kind: "WARN", text: "LP TRUST SCORE: 6/100" },
@@ -31,20 +33,46 @@ const ADDITIONAL: Omit<ActivityEvent, "id" | "ts">[] = [
   { kind: "WARN", text: "PREY USING DECOY LIQUIDITY POOL" },
   { kind: "DETECT", text: "ENTITY DETECTED: $CARPETCAT" },
   { kind: "CONSUME", text: "CONSUMED: $CARPETCAT" },
+  { kind: "SCAN", text: "PUMP.FUN BONDING CURVE LATENCY: 41ms" },
+  { kind: "DETECT", text: "ENTITY DETECTED: $NPCDOG" },
+  { kind: "WARN", text: "DEV WALLET DUMP DETECTED" },
 ];
+
+const CORRUPTION: Omit<ActivityEvent, "id" | "ts">[] = [
+  { kind: "GLITCH", text: "░ SIGNAL LOST ░░░░░░░░░░░░░" },
+  { kind: "UNKNOWN", text: "PACROOMS HAS LEFT THE CORRIDOR" },
+  { kind: "GLITCH", text: "stack corrupt @ 0x7F — restoring" },
+  { kind: "UNKNOWN", text: "?? UNKNOWN ENTITY WATCHING FROM CAM-13" },
+  { kind: "GLITCH", text: "▓▓ HUNGER OVERFLOW ▓▓ — clamping to 99%" },
+  { kind: "UNKNOWN", text: "WHO TURNED THE CABINET BACK ON" },
+  { kind: "GLITCH", text: "P̷A̴C̶R̸O̵O̵M̷S̶ — n0_se_e ye_u" },
+  { kind: "UNKNOWN", text: "the maze does not remember you" },
+  { kind: "GLITCH", text: "ERR 0x07F: cannot find Level 7 exit" },
+  { kind: "UNKNOWN", text: "ten minutes of footage missing" },
+];
+
+function corruptTimestamp(): string {
+  return Math.random() < 0.5 ? "?:??:??" : "??:??:??";
+}
 
 export function AgentActivityFeed() {
   const [events, setEvents] = useState<ActivityEvent[]>(ACTIVITY_EVENTS);
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const idxRef = useRef(0);
 
   useEffect(() => {
+    let count = 0;
+    let normalIdx = 0;
+    let corruptIdx = 0;
+
     const t = window.setInterval(() => {
-      const tmpl = ADDITIONAL[idxRef.current % ADDITIONAL.length];
-      idxRef.current++;
+      count++;
+      // ~1 in 7 is a corruption event
+      const corrupt = Math.random() < 0.14;
+      const tmpl = corrupt
+        ? CORRUPTION[corruptIdx++ % CORRUPTION.length]
+        : NORMAL[normalIdx++ % NORMAL.length];
       const ev: ActivityEvent = {
         ...tmpl,
-        id: `live-${Date.now()}-${idxRef.current}`,
+        id: `live-${Date.now()}-${count}`,
         ts: new Date().toISOString(),
       };
       setEvents((prev) => [ev, ...prev].slice(0, 60));
@@ -69,21 +97,19 @@ export function AgentActivityFeed() {
           {/* terminal feed */}
           <div className="border border-terminal-green/40 bg-void-800/80 shadow-terminal">
             <div className="flex items-center justify-between px-3 py-2 border-b border-terminal-green/30 font-mono text-[10px] tracking-[0.28em] uppercase">
-              <span className="text-terminal-green">
+              <span className="text-terminal-green truncate">
                 root@pacrooms:/var/log/pacrooms.agent
               </span>
-              <span className="flex items-center gap-2 text-zinc-500">
+              <span className="flex items-center gap-2 text-zinc-500 shrink-0">
                 <span className="h-1.5 w-1.5 rounded-full bg-terminal-green animate-flickerFast" />
                 tail -f
               </span>
             </div>
-            <div
-              ref={scrollRef}
-              className="font-mono text-[12px] sm:text-[13px] leading-snug p-4 h-[520px] overflow-hidden relative"
-            >
+            <div className="font-mono text-[12px] sm:text-[13px] leading-snug p-3 sm:p-4 h-[360px] sm:h-[460px] lg:h-[520px] overflow-hidden relative">
               <AnimatePresence initial={false}>
                 {events.map((e) => {
                   const s = KIND_STYLE[e.kind];
+                  const isCorrupt = e.kind === "GLITCH" || e.kind === "UNKNOWN";
                   return (
                     <motion.div
                       key={e.id}
@@ -91,10 +117,13 @@ export function AgentActivityFeed() {
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ duration: 0.25 }}
-                      className="flex items-start gap-2 mb-0.5"
+                      className={cn(
+                        "flex items-start gap-2 mb-0.5",
+                        isCorrupt && "animate-flicker",
+                      )}
                     >
                       <span className="text-zinc-600 shrink-0">
-                        [{timestamp(e.ts)}]
+                        [{isCorrupt ? corruptTimestamp() : timestamp(e.ts)}]
                       </span>
                       <span
                         className={cn(
@@ -104,12 +133,18 @@ export function AgentActivityFeed() {
                       >
                         {s.tag}
                       </span>
-                      <span className="text-zinc-300">{e.text}</span>
+                      <span
+                        className={cn(
+                          "min-w-0 break-words",
+                          isCorrupt ? "text-alert-red/90" : "text-zinc-300",
+                        )}
+                      >
+                        {e.text}
+                      </span>
                     </motion.div>
                   );
                 })}
               </AnimatePresence>
-              {/* fade to dark */}
               <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-void-800/95 to-transparent" />
               <div className="pointer-events-none absolute inset-0 bg-scanlines opacity-40" />
             </div>

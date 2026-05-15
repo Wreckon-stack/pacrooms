@@ -7,7 +7,11 @@
       "Bash(git init *)",
       "Bash(npx --yes vercel whoami)",
       "Bash(git add *)",
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "Bash(gh repo *)",
+      "Bash(npx --yes vercel link --yes --project pacrooms)",
+      "Bash(npx --yes vercel --prod --yes)",
+      "Bash(git push *)"
     ]
   }
 }

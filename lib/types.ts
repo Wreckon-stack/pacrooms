@@ -47,7 +47,9 @@ export interface ActivityEvent {
     | "WARN"
     | "CONSUME"
     | "SOULS"
-    | "EVOLVE";
+    | "EVOLVE"
+    | "GLITCH"
+    | "UNKNOWN";
   text: string;
 }
 

@@ -1,3 +1,4 @@
+import { BootSequence } from "@/components/BootSequence";
 import { CRTOverlay } from "@/components/CRTOverlay";
 import { TopNav } from "@/components/TopNav";
 import { HeroBootScreen } from "@/components/HeroBootScreen";
@@ -13,6 +14,7 @@ import { Footer } from "@/components/Footer";
 export default function Page() {
   return (
     <main className="relative min-h-screen bg-void-900 text-zinc-200">
+      <BootSequence />
       <TopNav />
       <HeroBootScreen />
       <AgentStatusDashboard />
