@@ -1,0 +1,75 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Pixel / VT fonts via Google Fonts CDN — loaded in layout */
+
+html,
+body {
+  background: #050402;
+  color: #e4e4e7;
+  /* prevent rubber-band flash */
+  overscroll-behavior-y: none;
+}
+
+body {
+  font-family: "IBM Plex Mono", "VT323", ui-monospace, monospace;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: geometricPrecision;
+}
+
+/* selection */
+::selection {
+  background: #cda434;
+  color: #050402;
+}
+
+/* scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #0a0805;
+}
+::-webkit-scrollbar-thumb {
+  background: #3a2410;
+  border: 1px solid #cda43440;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #cda434;
+}
+
+/* utility: subtle text shadow for terminal glow */
+.glow-yellow {
+  text-shadow: 0 0 6px rgba(205, 164, 52, 0.55);
+}
+.glow-green {
+  text-shadow: 0 0 6px rgba(57, 255, 20, 0.55);
+}
+.glow-red {
+  text-shadow: 0 0 6px rgba(255, 26, 26, 0.55);
+}
+
+/* reduce motion fallback */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* anchor offset so nav doesn't cover headings */
+section[id] {
+  scroll-margin-top: 70px;
+}
+
+/* focus rings tuned to palette */
+a:focus-visible,
+button:focus-visible {
+  outline: 1px solid #cda434;
+  outline-offset: 2px;
+}

@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm -v)",
+      "Bash(npm install *)",
+      "Bash(npm run *)",
+      "Bash(git init *)",
+      "Bash(npx --yes vercel whoami)",
+      "Bash(git add *)",
+      "Bash(git commit *)"
+    ]
+  }
+}
